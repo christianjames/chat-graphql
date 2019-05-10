@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import styled from 'styled-components'
+import styled  from 'styled-components'
 
 import App from 'grommet/components/App'
 import Box from 'grommet/components/Box'
@@ -24,7 +24,6 @@ const StyledImage = styled(Image)`
   width: auto;
   margin-bottom: 2rem;
 `
-
 const SignInPage = () => (
   <App>
     <Box full='vertical' justify='center' align='center' pad={ { vertical: 'large' } }>

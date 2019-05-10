@@ -4,7 +4,7 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import styled from 'styled-components'
+import styled, { injectGlobal } from 'styled-components'
 import Link from 'next/link'
 
 import { HashLoader } from 'react-spinners'
@@ -25,9 +25,11 @@ import Anchor from 'grommet/components/Anchor'
 import Button from 'grommet/components/Button'
 import Paragraph from 'grommet/components/Paragraph'
 import Label from 'grommet/components/Label'
+import Animate from 'grommet/components/Animate'
 
 import bootstrap from 'app/lib/bootstrap'
 import TextInput from 'app/modules/form/components/TextInput'
+import CustomScroll from 'app/modules/form/components/CustomScroll'
 
 const StyledRoomHeader = styled(Header)`
   border-bottom: 1px solid #ddd;
@@ -48,6 +50,11 @@ const StyledTextInput = styled(TextInput)`
 const AddChannelButton = styled(Button)`
   margin-left: auto;
 `
+const GlobalStyle = injectGlobal`
+  html {
+    overflow-y: auto;
+  }
+`
 
 const LoadingComponent = () => (
   <Box full='vertical' justify='center' align='center'>
@@ -61,109 +68,124 @@ import MessagesContainer from 'app/modules/channel/containers/MessagesContainer'
 import NewMessageContainer from 'app/modules/channel/containers/NewMessageContainer'
 import NewChannelContainer from 'app/modules/channel/containers/NewChannelContainer'
 
-const ChatRoom = ({ url, url: { query: { channel = 'general' } } }) => (
-  <CurrentUserContainer>
-    { ({ user }) => (
-      <ChannelsContainer>
-        { ({ loading, channels }) => (
-          (loading && !channels.length) ? <LoadingComponent /> : (
-            <App centered={ false }>
-              <Split fixed flex='right'>
-                <Sidebar colorIndex='neutral-1'>
-                  <Header pad='medium'>
-                    <Title>
-                      TallerChat <ChatIcon />
-                    </Title>
+const ChatRoom = ({ url, url: { query: { channel = 'general' } } }) => {
+  
+  let scrollRef = null;
 
-                    <NewChannelContainer channels={ channels }>
-                      { create => (
-                        <AddChannelButton
-                          icon={ <AddCircleIcon /> }
-                          onClick={ () => create(
-                            window.prompt('Name your new channel')
-                          ) }
-                        />
-                      ) }
-                    </NewChannelContainer>
-                  </Header>
+  const setScrollRef = element => {
+    scrollRef = element;
+  };
 
-                  <Box flex='grow' justify='start'>
-                    <Menu primary>
-                      { channels.map(({ name }) => (
-                        <Link key={ name } prefetch href={ `/messages/${name}` }>
-                          <Anchor className={ channel === name ? 'active' : '' }>
-                            # <b>{ name }</b>
-                          </Anchor>
-                        </Link>
-                      )) }
-                    </Menu>
-                  </Box>
+  return (
+    <CurrentUserContainer>
+      { ({ user }) => (
+        <ChannelsContainer>
+          { ({ loading, channels }) => (
+            (loading && !channels.length) ? <LoadingComponent /> : (
+              <App centered={ false }>
+                <Split fixed={false} flex='right'>
+                  <Sidebar colorIndex='neutral-1'>
+                    <Header pad='medium'>
+                      <Title>
+                        TallerChat <ChatIcon />
+                      </Title>
 
-                  <Footer pad='medium'>
-                    <Button icon={ <UserIcon /> } onClick={ console.log } />
-                    <Button icon={ <LogoutIcon /> } onClick={ console.log } />
-                  </Footer>
-                </Sidebar>
+                      <NewChannelContainer channels={ channels }>
+                        { create => (
+                          <AddChannelButton
+                            icon={ <AddCircleIcon /> }
+                            onClick={ () => create(
+                              window.prompt('Name your new channel')
+                            ) }
+                          />
+                        ) }
+                      </NewChannelContainer>
+                    </Header>
 
-                { !user || !user.uid ? (
-                  <LoadingComponent />
-                ) : (
-                  <MessagesContainer channel={ channels.find(({ name }) => name === channel) }>
-                    { ({ loading, refetch, messages }) => (
-                      <Box full='vertical'>
-                        <StyledRoomHeader pad={ { vertical: 'small', horizontal: 'medium' } } justify='between'>
-                          <Title>
-                            { '#' + channel }
-                          </Title>
+                    <Box flex='grow' justify='start'>
+                      <Menu primary>
+                        { channels.map(({ name }) => (
+                          <Link key={ name } prefetch href={ `/messages/${name}` }>
+                            <Anchor className={ channel === name ? 'active' : '' }>
+                              # <b>{ name }</b>
+                            </Anchor>
+                          </Link>
+                        )) }
+                      </Menu>
+                    </Box>
 
-                          <Button icon={ <RefreshIcon /> } onClick={ () => refetch() } />
-                        </StyledRoomHeader>
+                    <Footer pad='medium'>
+                      <Button icon={ <UserIcon /> } onClick={ console.log } />
+                      <Button icon={ <LogoutIcon /> } onClick={ console.log } />
+                    </Footer>
+                  </Sidebar>
 
-                        <Box pad='medium' flex='grow'>
-                          { loading ? 'Loading...' : (
-                            messages.length === 0 ? 'No one talking here yet :(' : (
-                              messages.map(({ id, author, message }) => (
-                                <Box key={ id } pad='small' credit={ author }>
-                                  <StyledAuthor>{ author }</StyledAuthor>
-                                  <StyledMessage>{ message }</StyledMessage>
-                                </Box>
-                              ))
-                            )
-                          ) }
-                        </Box>
+                  { !user || !user.uid ? (
+                    <LoadingComponent />
+                  ) : (                  
+                      <MessagesContainer channel={ channels.find(({ name }) => name === channel) }>
+                        { ({ loading, refetch, messages }) => (
+                          <Box full='vertical'>
+                            <StyledRoomHeader pad={ { vertical: 'small', horizontal: 'medium' } } justify='between'>
+                              <Title>
+                                { '#' + channel }
+                              </Title>
 
-                        <Box pad='medium' direction='column'>
-                          { user && user.uid ? (
-                            <NewMessageContainer
-                              user={ user }
-                              channel={ channels.find(({ name }) => name === channel) }
-                            >
-                              { ({ handleSubmit }) => (
-                                <form onSubmit={ handleSubmit }>
-                                  <NewMessageContainer.Message
-                                    placeHolder='Message #general'
-                                    component={ StyledTextInput }
-                                  />
-                                </form>
+                              <Button icon={ <RefreshIcon /> } onClick={ () => refetch() } />
+                            </StyledRoomHeader>
+
+                            <CustomScroll>
+                              <Box pad='medium' flex='grow'>
+                                { loading ? 'Loading...' : (
+                                  messages.length === 0 ? 'No one talking here yet :(' : (
+                                    messages.map(({ id, author, message }) => (
+                                      <Animate visible={true} key={ id } enter={{"animation": "fade", "duration": 1000, "delay": 0}}
+                                        keep={true}>
+                                        <Box pad='small' credit={ author }>
+                                          <StyledAuthor>{ author }</StyledAuthor>
+                                          <StyledMessage>{ message }</StyledMessage>
+                                        </Box>
+                                      </Animate>
+                                      
+                                    ))
+                                  )
+                                ) }
+                              </Box>
+                            </CustomScroll>
+
+                            <Box pad='medium' direction='column'>
+                              { user && user.uid ? (
+                                <NewMessageContainer
+                                  user={ user }
+                                  channel={ channels.find(({ name }) => name === channel) }
+                                >
+                                  { ({ handleSubmit }) => (
+                                    <form onSubmit={ handleSubmit }>
+                                      <NewMessageContainer.Message
+                                        placeHolder='Message #general'
+                                        component={ StyledTextInput }
+                                      />
+                                    </form>
+                                  ) }
+                                </NewMessageContainer>
+                              ) : (
+                                'Log in to post messages'
                               ) }
-                            </NewMessageContainer>
-                          ) : (
-                            'Log in to post messages'
-                          ) }
-                        </Box>
-                      </Box>
-                    ) }
-                  </MessagesContainer>
-                ) }
+                            </Box>
+                          </Box>
+                        ) }
+                      </MessagesContainer>
+                  ) }
 
-              </Split>
-            </App>
-          )
-        ) }
-      </ChannelsContainer>
-    ) }
-  </CurrentUserContainer>
-)
+                </Split>
+              </App>
+            )
+          ) }
+        </ChannelsContainer>
+      ) }
+    </CurrentUserContainer>
+  )
+}
 
 ChatRoom.propTypes = {
   url: PropTypes.object.isRequired,

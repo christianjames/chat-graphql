@@ -12,6 +12,7 @@ drupal/sites/default/settings.local.php
 # Ignore dependencies.
 vendor/
 node_modules/
+bin/
 
 # ===============================================
 # Temporary data --------------------------------
