@@ -6,6 +6,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled, { injectGlobal } from 'styled-components'
 import Link from 'next/link'
+import md5 from 'blueimp-md5'
 
 import { HashLoader } from 'react-spinners'
 import App from 'grommet/components/App'
@@ -26,10 +27,12 @@ import Button from 'grommet/components/Button'
 import Paragraph from 'grommet/components/Paragraph'
 import Label from 'grommet/components/Label'
 import Animate from 'grommet/components/Animate'
+import Image from 'grommet/components/Image'
 
 import bootstrap from 'app/lib/bootstrap'
 import TextInput from 'app/modules/form/components/TextInput'
 import CustomScroll from 'app/modules/form/components/CustomScroll'
+
 
 const StyledRoomHeader = styled(Header)`
   border-bottom: 1px solid #ddd;
@@ -142,7 +145,10 @@ const ChatRoom = ({ url, url: { query: { channel = 'general' } } }) => {
                                       <Animate visible={true} key={ id } enter={{"animation": "fade", "duration": 1000, "delay": 0}}
                                         keep={true}>
                                         <Box pad='small' credit={ author }>
-                                          <StyledAuthor>{ author }</StyledAuthor>
+                                          <Box flex direction='row' align='center'>
+                                            <Image style={{marginRight: '10px'}} size="thumb" src={`https://www.gravatar.com/avatar/${md5(author.mail)}`}/>
+                                            <Label>{ author.name }</Label>
+                                          </Box>
                                           <StyledMessage>{ message }</StyledMessage>
                                         </Box>
                                       </Animate>
