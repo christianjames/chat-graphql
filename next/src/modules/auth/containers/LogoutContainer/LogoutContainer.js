@@ -3,6 +3,9 @@ import PropTypes from 'prop-types'
 import { Mutation } from 'react-apollo'
 import Router from 'next/router'
 
+import Button from 'grommet/components/Button'
+import LogoutIcon from 'grommet/components/icons/base/Logout'
+
 import { logoutMutation } from './mutations'
 
 const LogoutContainer = ({ children }) => (

@@ -14,7 +14,6 @@ import ChatIcon from 'grommet/components/icons/base/Chat'
 import RefreshIcon from 'grommet/components/icons/base/Refresh'
 import AddCircleIcon from 'grommet/components/icons/base/Add'
 import UserIcon from 'grommet/components/icons/base/User'
-import LogoutIcon from 'grommet/components/icons/base/Logout'
 import Split from 'grommet/components/Split'
 import Sidebar from 'grommet/components/Sidebar'
 import Header from 'grommet/components/Header'
@@ -33,6 +32,7 @@ import bootstrap from 'app/lib/bootstrap'
 import TextInput from 'app/modules/form/components/TextInput'
 import CustomScroll from 'app/modules/form/components/CustomScroll'
 
+import LogoutContainer from 'app/modules/auth/containers/LogoutContainer'
 
 const StyledRoomHeader = styled(Header)`
   border-bottom: 1px solid #ddd;
@@ -58,34 +58,6 @@ const GlobalStyle = injectGlobal`
     overflow-y: auto;
   }
 `
-
-export const logoutMutation = gql`
-  mutation UserLogout {
-    user: userLogout
-  }
-`
-
-const LogoutContainer = ({ children, user, channel }) => (
-  <Mutation mutation={ logoutMutation }>
-    { send => (
-      <Button icon={ <LogoutIcon /> } onClick={ () => logout(send) } />      
-    ) }
-  </Mutation>
-)
-/**
- * Redirect when logout.
- */
-const redirect = () => {
-  Router.push('/')
-  return undefined
-}
-
-const logout = ( send ) => {
-  send()
-    .then(redirect)
-    .catch(redirect)
-}
-
 const LoadingComponent = () => (
   <Box full='vertical' justify='center' align='center'>
     <HashLoader color='#e02438' loading />
