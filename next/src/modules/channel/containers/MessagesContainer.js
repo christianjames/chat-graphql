@@ -13,7 +13,7 @@ import { rename } from 'app/lib/func'
 const query = gql`
   query Messages ($channel: String!) {
     messages: messageQuery(
-      limit: 50
+      limit: 500
       filter: {
         conditions: [{
           field: "channel"
@@ -26,6 +26,7 @@ const query = gql`
         id
         author: entityOwner {
           name
+          mail
         }
         ... on Message {
           message: body {
@@ -38,7 +39,6 @@ const query = gql`
 `
 
 const normalizeMessage = pipe(
-  over(lensProp('author'), prop('name')),
   over(lensProp('message'), prop('value')),
 )
 
