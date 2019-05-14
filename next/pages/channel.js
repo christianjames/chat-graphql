@@ -59,6 +59,33 @@ const GlobalStyle = injectGlobal`
   }
 `
 
+export const logoutMutation = gql`
+  mutation UserLogout {
+    user: userLogout
+  }
+`
+
+const LogoutContainer = ({ children, user, channel }) => (
+  <Mutation mutation={ logoutMutation }>
+    { send => (
+      <Button icon={ <LogoutIcon /> } onClick={ () => logout(send) } />      
+    ) }
+  </Mutation>
+)
+/**
+ * Redirect when logout.
+ */
+const redirect = () => {
+  Router.push('/')
+  return undefined
+}
+
+const logout = ( send ) => {
+  send()
+    .then(redirect)
+    .catch(redirect)
+}
+
 const LoadingComponent = () => (
   <Box full='vertical' justify='center' align='center'>
     <HashLoader color='#e02438' loading />
@@ -119,7 +146,7 @@ const ChatRoom = ({ url, url: { query: { channel = 'general' } } }) => {
 
                     <Footer pad='medium'>
                       <Button icon={ <UserIcon /> } onClick={ console.log } />
-                      <Button icon={ <LogoutIcon /> } onClick={ console.log } />
+                      <LogoutContainer />
                     </Footer>
                   </Sidebar>
 
