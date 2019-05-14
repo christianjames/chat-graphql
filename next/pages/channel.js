@@ -78,6 +78,11 @@ const ChatRoom = ({ url, url: { query: { channel = 'general' } } }) => {
     scrollRef = element;
   };
 
+  const redirectToChannel = (channel) => {
+    Router.push('/channel', `/messages/${channel}`)
+    return undefined
+  }
+
   return (
     <CurrentUserContainer>
       { ({ user }) => (

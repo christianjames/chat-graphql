@@ -4,7 +4,7 @@
   "description": "Webapp for the TallerChat App",
   "main": "index.js",
   "scripts": {
-    "dev": "next dev",
+    "dev": "node server.js",
     "build": "next build",
     "build:start": "next build && npm start",
     "start": "NODE_ENV=production next start",
