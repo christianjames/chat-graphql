@@ -20,7 +20,6 @@ class CustomScroll extends React.Component {
     }
 
     handleScroll = (e) => {
-        console.log('scroll')
         if (this.scrollRef.scrollTop == this.scrollRef.scrollHeight - this.scrollRef.clientHeight) {
             this.changedScroll = false
         }

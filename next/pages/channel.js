@@ -31,6 +31,10 @@ import bootstrap from 'app/lib/bootstrap'
 import TextInput from 'app/modules/form/components/TextInput'
 import CustomScroll from 'app/modules/form/components/CustomScroll'
 
+import { Mutation } from 'react-apollo'
+import gql from 'graphql-tag'
+import Router from 'next/router'
+
 const StyledRoomHeader = styled(Header)`
   border-bottom: 1px solid #ddd;
 `
@@ -55,6 +59,33 @@ const GlobalStyle = injectGlobal`
     overflow-y: auto;
   }
 `
+
+export const logoutMutation = gql`
+  mutation UserLogout {
+    user: userLogout
+  }
+`
+
+const LogoutContainer = ({ children, user, channel }) => (
+  <Mutation mutation={ logoutMutation }>
+    { send => (
+      <Button icon={ <LogoutIcon /> } onClick={ () => logout(send) } />      
+    ) }
+  </Mutation>
+)
+/**
+ * Redirect when logout.
+ */
+const redirect = () => {
+  Router.push('/')
+  return undefined
+}
+
+const logout = ( send ) => {
+  send()
+    .then(redirect)
+    .catch(redirect)
+}
 
 const LoadingComponent = () => (
   <Box full='vertical' justify='center' align='center'>
@@ -116,7 +147,7 @@ const ChatRoom = ({ url, url: { query: { channel = 'general' } } }) => {
 
                     <Footer pad='medium'>
                       <Button icon={ <UserIcon /> } onClick={ console.log } />
-                      <Button icon={ <LogoutIcon /> } onClick={ console.log } />
+                      <LogoutContainer />
                     </Footer>
                   </Sidebar>
 
